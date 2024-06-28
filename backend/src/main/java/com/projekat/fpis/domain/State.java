@@ -35,11 +35,6 @@ public class State {
     @Column(name = "state_id")
     private StateId stateId;
 
-//    @ManyToOne
-//    @MapsId("countryId")
-//    @JoinColumn(name = "country_id", referencedColumnName = "country_id")
-//    private Country country;
-
     @Column(nullable = false)
     private String name;
     

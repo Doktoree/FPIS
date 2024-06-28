@@ -6,6 +6,7 @@ package com.projekat.fpis.domain;
 
 import com.projekat.fpis.enums.State;
 import com.projekat.fpis.enums.Unit;
+import com.projekat.fpis.ids.InventoryItemId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -31,6 +33,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(InventoryItemId.class)
 public class InventoryItem {
     
     @Id
@@ -41,7 +44,7 @@ public class InventoryItem {
     @Id
     @ManyToOne
     @JoinColumn(name = "inventory_id")
-    private Inventory inventoryId;
+    private Inventory inventory;
     
     @Column(nullable = false)
     private double quantity;
