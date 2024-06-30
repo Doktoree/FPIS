@@ -7,6 +7,7 @@ package com.projekat.fpis.ids;
 import com.projekat.fpis.domain.Inventory;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class InventoryItemId implements Serializable{
     
     private Long inventoryItemId;
