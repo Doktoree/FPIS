@@ -4,6 +4,7 @@
  */
 package com.projekat.fpis.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projekat.fpis.domain.Inventory;
 import com.projekat.fpis.domain.Product;
 import com.projekat.fpis.enums.State;
@@ -33,6 +34,7 @@ public class InventoryItemDto {
 
     private Long inventoryItemId;
 
+    @JsonIgnore
     private Inventory inventory;
 
     private double quantity;

@@ -6,6 +6,7 @@ package com.projekat.fpis.mapper;
 
 import com.projekat.fpis.domain.Inventory;
 import com.projekat.fpis.domain.InventoryItem;
+import com.projekat.fpis.dto.EmployeeDto;
 import com.projekat.fpis.dto.InventoryDto;
 import com.projekat.fpis.dto.InventoryItemDto;
 import java.time.LocalDateTime;
@@ -25,9 +26,10 @@ public class InventoryMapper {
     }
     
     
-    public static InventoryDto mapToInventoryDto(Inventory inventory, List<InventoryItemDto> inventoryItems){
+    public static InventoryDto mapToInventoryDto(Inventory inventory, List<InventoryItemDto> inventoryItems, List<EmployeeDto> employeeDtos){
         
-        return new InventoryDto(inventory.getInventoryId(), inventory.getName(), inventory.getDate(), inventoryItems);
+        
+        return new InventoryDto(inventory.getInventoryId(), inventory.getName(), inventory.getDate(), employeeDtos, inventoryItems);
         
     }
     

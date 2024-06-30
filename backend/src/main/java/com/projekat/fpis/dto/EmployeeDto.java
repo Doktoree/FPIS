@@ -4,6 +4,7 @@
  */
 package com.projekat.fpis.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.projekat.fpis.domain.Country;
 import com.projekat.fpis.domain.Department;
 import com.projekat.fpis.domain.State;
@@ -29,17 +30,22 @@ public class EmployeeDto {
     private String firstName;
 
     private String lastName;
-
+    
+    @JsonIgnore
     private String JMBG;
-
+    
     private Department department;
 
+    @JsonIgnore
     private Country country;
     
+    @JsonIgnore
     private State state;
     
+    @JsonIgnore
     private Street street;
     
+    @JsonIgnore
     private StreetNumber streetNumber;
     
 }

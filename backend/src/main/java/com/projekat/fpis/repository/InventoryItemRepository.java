@@ -4,8 +4,10 @@
  */
 package com.projekat.fpis.repository;
 
+import com.projekat.fpis.domain.Inventory;
 import com.projekat.fpis.domain.InventoryItem;
 import com.projekat.fpis.ids.InventoryItemId;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface InventoryItemRepository extends JpaRepository<InventoryItem, InventoryItemId> {
+    
+    List<InventoryItem> findByInventory(Inventory inventory);
     
 }

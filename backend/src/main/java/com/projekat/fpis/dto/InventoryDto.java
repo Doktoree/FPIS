@@ -25,7 +25,9 @@ public class InventoryDto {
 
     private String name;
     
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
+    
+    private List<EmployeeDto> employeeDtos;
     
     private List<InventoryItemDto> inventoryItems;
     
