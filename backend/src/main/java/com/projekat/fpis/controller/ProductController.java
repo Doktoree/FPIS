@@ -5,13 +5,12 @@
 package com.projekat.fpis.controller;
 
 import com.projekat.fpis.dto.ProductDto;
-import com.projekat.fpis.repository.ProductRepository;
 import com.projekat.fpis.service.ProductService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/product")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
 
     @Autowired
@@ -57,7 +57,7 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
     
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<?> getProductByExample(@RequestBody ProductDto productDto){
         
         List<ProductDto> productDtos = productService.getProductByExample(productDto);
