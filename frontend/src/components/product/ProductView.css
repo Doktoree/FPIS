@@ -1,0 +1,46 @@
+/* ProductView.css */
+
+/* Stil za formu za pretragu */
+.form-inline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    margin-right: 10px;
+  }
+  
+  .btn-primary {
+    margin-left: 10px;
+  }
+  
+  /* Stil za tabelu proizvoda */
+  .table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .thead-dark th {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+  }
+  
+  /* Stil za dugmad */
+  .btn-danger {
+    margin-right: 10px;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  
