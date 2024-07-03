@@ -22,6 +22,8 @@ function AddProduct() {
       description: opis,
     };
 
+    console.log(product);
+
     await createProduct(product);
     setIme('');
     setCena('');

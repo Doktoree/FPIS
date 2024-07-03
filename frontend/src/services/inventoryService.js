@@ -28,6 +28,10 @@ export async function createInventory(inventory){
         body: JSON.stringify(inventory),
       });
 
+    if(!response.ok){
+      new Error("There is error in creating Inventory!");
+    }
+
     const data = response.json();
 
     return data;

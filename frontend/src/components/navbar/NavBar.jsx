@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./NavBar.css"; // Importuje se NavBar.css koji se nalazi u istom folderu
+import "./NavBar.css"; 
 
 function NavBar() {
   return (
@@ -24,7 +24,15 @@ function NavBar() {
               <Link to="/AddInventory" className="navbar-link">Add inventory</Link>
             </li>
             <li className="submenu-item">
-              <Link to="/ViewInventories" className="navbar-link">View all inventories</Link>
+              <Link to="/InventoryView" className="navbar-link">View all inventories</Link>
+            </li>
+          </ul>
+        </li>
+        <li className="navbar-item">
+          <span className="navbar-link">User</span>
+          <ul className="submenu">
+            <li className="submenu-item">
+              <Link to="/UserDetails" className="navbar-link">User details</Link>
             </li>
           </ul>
         </li>

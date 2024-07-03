@@ -10,7 +10,7 @@ export async function getAllProducts() {
 
 export async function getProductById(id) {
   const url = apiUrl + "/" + id;
-  console.log("Url: " + url);
+
   const response = await fetch(url);
 
   if (!response.ok) {
