@@ -12,7 +12,7 @@ public enum State {
     
     NEW,
     USED,
-    DAMEGED,
+    DAMAGED,
     RETURNED,
     SOLD
     

@@ -4,7 +4,9 @@
  */
 package com.projekat.fpis.service;
 
+import com.projekat.fpis.domain.InventoryItem;
 import com.projekat.fpis.domain.Product;
+import com.projekat.fpis.dto.InventoryItemDto;
 import com.projekat.fpis.dto.ProductDto;
 import com.projekat.fpis.mapper.ProductMapper;
 import com.projekat.fpis.repository.ProductRepository;
@@ -102,4 +104,18 @@ public class ProductService {
         return true;
         
     }
+    
+    public boolean checkProduct(List<InventoryItemDto> inventoryItems){
+        
+        for(InventoryItemDto it: inventoryItems){
+            
+            if(getProductById(it.getProductDto().getProductId()) == null)
+                return false;
+            
+        }
+        
+        return true;
+        
+    }
+    
 }

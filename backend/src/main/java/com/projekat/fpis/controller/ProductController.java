@@ -4,6 +4,7 @@
  */
 package com.projekat.fpis.controller;
 
+import com.projekat.fpis.dto.InventoryItemDto;
 import com.projekat.fpis.dto.ProductDto;
 import com.projekat.fpis.service.ProductService;
 import java.util.List;
@@ -37,70 +38,70 @@ public class ProductController {
 
         List<ProductDto> products = productService.getAllProducts();
 
-        if (products == null) 
+        if (products == null) {
             return ResponseEntity.badRequest().body("There are no products");
-        
+        }
 
         return ResponseEntity.ok(products);
 
     }
-    
-    
+
     @GetMapping("{id}")
-    public ResponseEntity<?> getProductById(@PathVariable Long id){
-        
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+
         ProductDto product = productService.getProductById(id);
-        
-        if(product == null)
+
+        if (product == null) {
             return ResponseEntity.badRequest().body("There is no product with given ID!");
-        
+        }
+
         return ResponseEntity.ok(product);
     }
-    
+
     @PostMapping("/search")
-    public ResponseEntity<?> getProductByExample(@RequestBody ProductDto productDto){
-        
+    public ResponseEntity<?> getProductByExample(@RequestBody ProductDto productDto) {
+
         List<ProductDto> productDtos = productService.getProductByExample(productDto);
-        
-        if(productDtos == null)
+
+        if (productDtos == null) {
             return ResponseEntity.badRequest().body("There are no products for given example!");
-        
+        }
+
         return ResponseEntity.ok(productDtos);
-        
-    }
-    
-    @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto){
-        
-        ProductDto createdProductDto = productService.createProduct(productDto);
-        
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProductDto);
-        
-    }
-    
-    
-    @PatchMapping("{id}")
-    public ResponseEntity<?> saveProduct(@PathVariable Long id, @RequestBody ProductDto productDto){
-        
-        ProductDto savedProductDto = productService.saveProduct(productDto, id);
-        
-        if(savedProductDto == null)
-            return ResponseEntity.badRequest().body("There is no product with given ID!");
-        
-        return ResponseEntity.ok(savedProductDto);
-        
+
     }
 
-    
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id){
-        
-        if(!productService.deleteProduct(id))
-            return ResponseEntity.badRequest().body("There is no product with given ID!");
-        
-        return ResponseEntity.ok("Product is succesfully deleted!");
-        
-        
+    @PostMapping
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) {
+
+        ProductDto createdProductDto = productService.createProduct(productDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProductDto);
+
     }
-    
+
+    @PatchMapping("{id}")
+    public ResponseEntity<?> saveProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
+
+        ProductDto savedProductDto = productService.saveProduct(productDto, id);
+
+        if (savedProductDto == null) {
+            return ResponseEntity.badRequest().body("There is no product with given ID!");
+        }
+
+        return ResponseEntity.ok(savedProductDto);
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+
+        if (!productService.deleteProduct(id)) {
+            return ResponseEntity.badRequest().body("There is no product with given ID!");
+        }
+
+        return ResponseEntity.ok("Product is succesfully deleted!");
+
+    }
+
 }

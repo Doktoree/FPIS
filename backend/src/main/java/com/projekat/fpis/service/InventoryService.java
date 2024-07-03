@@ -12,14 +12,17 @@ import com.projekat.fpis.domain.Product;
 import com.projekat.fpis.dto.EmployeeDto;
 import com.projekat.fpis.dto.InventoryDto;
 import com.projekat.fpis.dto.InventoryItemDto;
+import com.projekat.fpis.dto.ProductDto;
 import com.projekat.fpis.ids.InventoryEmployeeId;
 import com.projekat.fpis.mapper.EmployeeMapper;
 import com.projekat.fpis.mapper.InventoryItemMapper;
 import com.projekat.fpis.mapper.InventoryMapper;
+import com.projekat.fpis.mapper.ProductMapper;
 import com.projekat.fpis.repository.EmployeeRepository;
 import com.projekat.fpis.repository.InventoryEmployeeRepository;
 import com.projekat.fpis.repository.InventoryItemRepository;
 import com.projekat.fpis.repository.InventoryRepository;
+import com.projekat.fpis.repository.ProductRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +49,12 @@ public class InventoryService {
     @Autowired
     private InventoryEmployeeRepository inventoryEmployeeRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private ProductService productService;
+
     public List<InventoryDto> getAllInventories() {
 
         List<Inventory> inventories = inventoryRepository.findAll();
@@ -54,17 +63,27 @@ public class InventoryService {
         inventories.stream().forEach(i -> {
 
             List<InventoryEmployee> inventoryEmployees = inventoryEmployeeRepository.findById_InventoryInventoryId(i.getInventoryId());
-            
+
             inventoryEmployees.stream().forEach(ie -> {
-            
-                    Employee emp = ie.getId().getEmployee();
-                    Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
-                    Employee employee = optionalEmployee.get();
-                    employees.add(EmployeeMapper.mapToEmployeeDto(employee));
-            
+
+                Employee emp = ie.getId().getEmployee();
+                Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
+                Employee employee = optionalEmployee.get();
+                employees.add(EmployeeMapper.mapToEmployeeDto(employee));
+
             });
-            
+
             List<InventoryItem> inventoryItems = inventoryItemRepository.findByInventory(i);
+
+            for (InventoryItem it : inventoryItems) {
+                Product product = null;
+                Optional<Product> optionalProduct = productRepository.findById(it.getProduct().getProductId());
+                if (optionalProduct.isPresent()) {
+                    product = optionalProduct.get();
+                    it.setProduct(product);
+                }
+
+            }
             List<InventoryItemDto> inventoryItemDtos = inventoryItems.stream().map(InventoryItemMapper::mapToInventoryItemDto).collect(Collectors.toList());
             InventoryDto dto = InventoryMapper.mapToInventoryDto(i, inventoryItemDtos, employees);
             inventoryDtos.add(dto);
@@ -86,25 +105,35 @@ public class InventoryService {
         Inventory inventory = optionalInventory.get();
 
         List<InventoryItem> inventoryItems = inventoryItemRepository.findByInventory(inventory);
+
+        for (InventoryItem it : inventoryItems) {
+            Product product = ProductMapper.mapToProduct(productService.getProductById(it.getProduct().getProductId()));
+            it.setProduct(product);
+
+        }
         List<InventoryItemDto> inventoryDtos = inventoryItems.stream().map(InventoryItemMapper::mapToInventoryItemDto).collect(Collectors.toList());
-        
+
         List<InventoryEmployee> inventoryEmployees = inventoryEmployeeRepository.findById_InventoryInventoryId(inventory.getInventoryId());
         List<EmployeeDto> employees = new ArrayList<>();
-        
+
         inventoryEmployees.stream().forEach(ie -> {
-            
-                    Employee emp = ie.getId().getEmployee();
-                    Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
-                    Employee employee = optionalEmployee.get();
-                    employees.add(EmployeeMapper.mapToEmployeeDto(employee));
-            
-            });
-        
-        return InventoryMapper.mapToInventoryDto(inventory, inventoryDtos,employees);
+
+            Employee emp = ie.getId().getEmployee();
+            Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
+            Employee employee = optionalEmployee.get();
+            employees.add(EmployeeMapper.mapToEmployeeDto(employee));
+
+        });
+
+        return InventoryMapper.mapToInventoryDto(inventory, inventoryDtos, employees);
 
     }
 
     public InventoryDto createInventory(InventoryDto inventoryDto) {
+
+        if (!productService.checkProduct(inventoryDto.getInventoryItems())) {
+            return null;
+        }
 
         List<EmployeeDto> employeeDtos = inventoryDto.getEmployeeDtos();
         Inventory inventory = InventoryMapper.mapToInventory(inventoryDto);
@@ -112,35 +141,39 @@ public class InventoryService {
         List<InventoryItem> inventoryItems = inventoryItemDtos.stream().map(InventoryItemMapper::mapToInventoryItem).collect(Collectors.toList());
         List<InventoryItemDto> createdInventoryItemDtos = new ArrayList<>();
         List<EmployeeDto> createdEmployeesDto = new ArrayList<>();
-        
+
         Inventory createdInventory = inventoryRepository.save(inventory);
-        
+
         employeeDtos.stream().forEach(emp -> {
-        
+
             Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
             Employee employee = optionalEmployee.get();
-            
+
             InventoryEmployeeId id = new InventoryEmployeeId(createdInventory, employee);
             InventoryEmployee inventoryEmployee = new InventoryEmployee(id);
             inventoryEmployeeRepository.save(inventoryEmployee);
             createdEmployeesDto.add(EmployeeMapper.mapToEmployeeDto(employee));
-            
-        
+
         });
-        
+
         inventoryItems.stream().forEach(it -> {
 
             it.setInventory(createdInventory);
             InventoryItem item = inventoryItemRepository.save(it);
-
+            Product product = ProductMapper.mapToProduct(productService.getProductById(item.getProduct().getProductId()));
+            item.setProduct(product);
             createdInventoryItemDtos.add(InventoryItemMapper.mapToInventoryItemDto(item));
 
         });
 
-        return InventoryMapper.mapToInventoryDto(createdInventory, createdInventoryItemDtos,createdEmployeesDto);
+        return InventoryMapper.mapToInventoryDto(createdInventory, createdInventoryItemDtos, createdEmployeesDto);
     }
 
     public InventoryDto saveInventory(Long id, InventoryDto inventoryDto) {
+
+        if (!productService.checkProduct(inventoryDto.getInventoryItems())) {
+            return null;
+        }
 
         Optional<Inventory> optionalInventory = inventoryRepository.findById(id);
         List<InventoryItem> updatedInventoryItems = new ArrayList<>();
@@ -158,15 +191,14 @@ public class InventoryService {
         List<InventoryEmployee> inventoryEmployees = inventoryEmployeeRepository.findById_InventoryInventoryId(updatedInventory.getInventoryId());
         List<EmployeeDto> employees = new ArrayList<>();
         inventoryEmployees.stream().forEach(ie -> {
-            
-                    Employee emp = ie.getId().getEmployee();
-                    Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
-                    Employee employee = optionalEmployee.get();
-                    employees.add(EmployeeMapper.mapToEmployeeDto(employee));
-            
-            });
-        
-        
+
+            Employee emp = ie.getId().getEmployee();
+            Optional<Employee> optionalEmployee = employeeRepository.findById(emp.getEmployeeId());
+            Employee employee = optionalEmployee.get();
+            employees.add(EmployeeMapper.mapToEmployeeDto(employee));
+
+        });
+
         for (InventoryItemDto itDto : inventoryDto.getInventoryItems()) {
 
             for (InventoryItem it : inventoryItems) {
@@ -176,8 +208,7 @@ public class InventoryService {
                     it.setQuantity(itDto.getQuantity());
                     it.setUnit(itDto.getUnit());
                     it.setState(itDto.getState());
-                    Product product = new Product();
-                    product.setProductId(itDto.getProductId());
+                    Product product = ProductMapper.mapToProduct(productService.getProductById(it.getProduct().getProductId()));
                     it.setProduct(product);
                     updatedInventoryItems.add(it);
 

@@ -43,6 +43,6 @@ public class InventoryItemDto {
 
     private State state;
     
-    private Long productId;
+    private ProductDto productDto;
 
 }

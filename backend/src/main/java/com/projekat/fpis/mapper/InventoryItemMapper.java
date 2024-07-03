@@ -7,6 +7,7 @@ package com.projekat.fpis.mapper;
 import com.projekat.fpis.domain.InventoryItem;
 import com.projekat.fpis.domain.Product;
 import com.projekat.fpis.dto.InventoryItemDto;
+import com.projekat.fpis.dto.ProductDto;
 import com.projekat.fpis.enums.State;
 import com.projekat.fpis.enums.Unit;
 
@@ -18,28 +19,28 @@ public class InventoryItemMapper {
 
     public static InventoryItem mapToInventoryItem(InventoryItemDto inventoryItemDto) {
 
-        Product prod = new Product();
-        prod.setProductId(inventoryItemDto.getProductId());
+        Product product = ProductMapper.mapToProduct(inventoryItemDto.getProductDto());
 
         return new InventoryItem(inventoryItemDto.getInventoryItemId(),
                 inventoryItemDto.getInventory(),
                 inventoryItemDto.getQuantity(),
                 inventoryItemDto.getUnit(),
                 inventoryItemDto.getState(),
-                prod);
+                product);
 
     }
     
     
     public static InventoryItemDto mapToInventoryItemDto(InventoryItem inventoryItem){
         
+        ProductDto productDto = ProductMapper.mapToProductDto(inventoryItem.getProduct());
         
         return new InventoryItemDto(inventoryItem.getInventoryItemId(), 
                 inventoryItem.getInventory(), 
                 inventoryItem.getQuantity(), 
                 inventoryItem.getUnit(), 
                 inventoryItem.getState(), 
-                inventoryItem.getProduct().getProductId());
+                productDto);
         
     }
 
