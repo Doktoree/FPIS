@@ -59,9 +59,10 @@ public class ProductController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> getProductByExample(@RequestBody ProductDto productDto) {
+    public ResponseEntity<?> getProductByName(@RequestBody ProductDto productDto) {
 
-        List<ProductDto> productDtos = productService.getProductByExample(productDto);
+        System.out.println("Product dto: " + productDto.getName());
+        List<ProductDto> productDtos = productService.getProductByName(productDto);
 
         if (productDtos == null) {
             return ResponseEntity.badRequest().body("There are no products for given example!");

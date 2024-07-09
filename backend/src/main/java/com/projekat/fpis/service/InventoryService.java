@@ -14,6 +14,7 @@ import com.projekat.fpis.dto.InventoryDto;
 import com.projekat.fpis.dto.InventoryItemDto;
 import com.projekat.fpis.dto.ProductDto;
 import com.projekat.fpis.ids.InventoryEmployeeId;
+import com.projekat.fpis.ids.InventoryItemId;
 import com.projekat.fpis.mapper.EmployeeMapper;
 import com.projekat.fpis.mapper.InventoryItemMapper;
 import com.projekat.fpis.mapper.InventoryMapper;
@@ -23,6 +24,8 @@ import com.projekat.fpis.repository.InventoryEmployeeRepository;
 import com.projekat.fpis.repository.InventoryItemRepository;
 import com.projekat.fpis.repository.InventoryRepository;
 import com.projekat.fpis.repository.ProductRepository;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -220,6 +223,66 @@ public class InventoryService {
 
         return InventoryMapper.mapToInventoryDto(updatedInventory, updatedInventoryItems.stream().map(InventoryItemMapper::mapToInventoryItemDto).collect(Collectors.toList()), employees);
 
+    }
+
+    public boolean deleteInventoryItem(Long invetoryId, Long inventoryItemId) {
+
+        System.out.println("Usao u metodu 1!");
+        Inventory inventory = new Inventory();
+        inventory.setInventoryId(invetoryId);
+        InventoryItemId id = new InventoryItemId(inventoryItemId, inventory);
+
+        Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findById(id);
+        System.out.println("Usao u metodu 2!");
+        if (!optionalInventoryItem.isPresent()) {
+            System.out.println("Vratio false 1!");
+            return false;
+
+        }
+        Duration duration = Duration.between(LocalDateTime.now(), optionalInventoryItem.get().getInventory().getDate());
+        if (duration.toDays() > 1) {
+            return false;
+        }
+        inventoryItemRepository.deleteById(id);
+        System.out.println("Ende metoda 1!");
+        return true;
+
+    }
+   
+    
+    public void updateInventory(InventoryDto inventoryDto){
+        
+        Optional<Inventory> optionalInventory = inventoryRepository.findById(inventoryDto.getInventoryId());
+        Inventory inventory = optionalInventory.get();
+        List<Employee> employees = inventoryDto.getEmployeeDtos().stream().map(EmployeeMapper::mapToEmployee).collect(Collectors.toList());
+        Employee employee = employees.get(0);
+        List<InventoryItem> inventoryItems = inventoryDto.getInventoryItems().stream().map(InventoryItemMapper::mapToInventoryItem).collect(Collectors.toList());
+        List<InventoryEmployee> inventoryEmployees = inventoryEmployeeRepository.findById_InventoryInventoryId(inventory.getInventoryId());
+        boolean flag = false;
+        System.out.println("Prosao update 1");
+        for(InventoryEmployee ie: inventoryEmployees){
+            
+            if(employee.getEmployeeId().compareTo(ie.getId().getEmployee().getEmployeeId()) == 0){
+                flag = true;
+                break;
+            }
+            
+        }
+        System.out.println("Prosao update 2");
+        if(!flag){
+            
+            InventoryEmployeeId id = new InventoryEmployeeId(inventory, employee);
+            inventoryEmployeeRepository.save(new InventoryEmployee(id));
+        }
+        System.out.println("Prosao update 3");
+        inventoryItems.stream().forEach(it -> {
+
+            it.setInventory(inventory);
+            System.out.println("Inventort item update: " + it.toString());
+            inventoryItemRepository.save(it);
+        
+        });
+        System.out.println("Prosao update 4");
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,4 +81,24 @@ public class InventoryController {
         
     }
     
+    @DeleteMapping("{invetoryId}/{inventoryItemId}")
+    public ResponseEntity<String> deleteInventoryItem(@PathVariable Long invetoryId, @PathVariable Long inventoryItemId){
+        
+        System.out.println("Usao 1: " + invetoryId + " item: " + inventoryItemId);
+        if(!inventoryService.deleteInventoryItem(invetoryId, inventoryItemId)){
+            return ResponseEntity.badRequest().body("Inventory item can not be deleted!");
+        }
+        
+        return ResponseEntity.ok("Inventory item is successfully deleted!");
+    }
+    
+    @PatchMapping()
+    public ResponseEntity<?> updateInventory(@RequestBody InventoryDto inventoryDto){
+        
+        System.out.println("Inventory dto: " + inventoryDto.toString());
+        inventoryService.updateInventory(inventoryDto);
+        
+        return ResponseEntity.ok("Inventory is successfully updated!");
+        
+    }
 }

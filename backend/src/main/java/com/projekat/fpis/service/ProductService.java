@@ -50,11 +50,11 @@ public class ProductService {
         return ProductMapper.mapToProductDto(product);
     }
     
-    public List<ProductDto> getProductByExample(ProductDto productDto){
+    public List<ProductDto> getProductByName(ProductDto productDto){
         
         Product product = ProductMapper.mapToProduct(productDto);
         
-        List<Product> products = productRepository.findAll(Example.of(product));
+        List<Product> products = productRepository.findByName(product.getName());
         
         List<ProductDto> productDtos =  products.stream().map(ProductMapper::mapToProductDto).collect(Collectors.toList());
         
