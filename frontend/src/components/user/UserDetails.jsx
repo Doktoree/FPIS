@@ -1,16 +1,14 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function UserDetails({ loggedInUser,setLoggedInUser,setIsLoggedIn }) {
-
-    const navigate = useNavigate();
+function UserDetails({ loggedInUser, setLoggedInUser, setIsLoggedIn }) {
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-
     setLoggedInUser(null);
     setIsLoggedIn(false);
+    localStorage.removeItem("user");
     navigate("/");
-
   };
 
   return (
@@ -23,7 +21,7 @@ function UserDetails({ loggedInUser,setLoggedInUser,setIsLoggedIn }) {
             type="text"
             className="form-control"
             id="employeeId"
-            value={loggedInUser.employee.employeeId} 
+            value={loggedInUser.employee.employeeId}
             readOnly
           />
         </div>
@@ -33,7 +31,7 @@ function UserDetails({ loggedInUser,setLoggedInUser,setIsLoggedIn }) {
             type="text"
             className="form-control"
             id="firstName"
-             value={loggedInUser.employee.firstName}
+            value={loggedInUser.employee.firstName}
             readOnly
           />
         </div>
@@ -57,7 +55,11 @@ function UserDetails({ loggedInUser,setLoggedInUser,setIsLoggedIn }) {
             readOnly
           />
         </div>
-        <button type="button" className="btn btn-primary"  onClick={handleLogout} >
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={handleLogout}
+        >
           Logout
         </button>
       </form>

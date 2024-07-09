@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { saveProduct } from "../../services/productService";
 import "./AddProduct.css";
 
@@ -10,27 +10,27 @@ function UpdateProduct() {
   const [ime, setIme] = useState(product ? product.name : "");
   const [cena, setCena] = useState(product ? product.price : "");
   const [opis, setOpis] = useState(product ? product.description : "");
+  const navigate = useNavigate();
 
-  const onSubmitHandler = async (event) =>{
-
-    if(isNaN(cena)){
-        alert('Price must be number!');
-        return;
+  const onSubmitHandler = async (event) => {
+    if (isNaN(cena)) {
+      alert("Price must be number!");
+      return;
     }
 
     event.preventDefault();
 
     const updatedProduct = {
-
-        productId: product.productId,
-        name: ime,
-        price: cena,
-        description: opis
-    }
+      productId: product.productId,
+      name: ime,
+      price: cena,
+      description: opis,
+    };
 
     await saveProduct(updatedProduct, updatedProduct.productId);
-    alert('Product is updated!');
-  }
+    alert("Product is updated!");
+    navigate("/ProductView");
+  };
 
   return (
     <div className="container mt-4">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   deleteProduct,
@@ -9,12 +9,29 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./ProductView.css";
 
-function ProductView({ products }) {
+function ProductView() {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
-  const [filteredProduct, setFilteredProduct] = useState(products);
-  const[selectedProduct, setSelectedProduct] = useState(null);
+  const [filteredProduct, setFilteredProduct] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [trigger, setTrigger] = useState(0);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const products = await getAllProducts();
+        console.log(products);
+        setProducts(products);
+        setFilteredProduct(products);
+      } catch (error) {
+        console.log("Greska!");
+      }
+    }
+
+    fetchData();
+  }, [trigger]);
 
   const searchHandler = async () => {
     try {
@@ -25,10 +42,10 @@ function ProductView({ products }) {
         name: name,
       };
 
-      if (id.trim() != "") {
+      if (id.trim() !== "") {
         results = await getProductById(id);
         results = [results];
-      } else if (id.trim() == "" && name.trim() == "") {
+      } else if (id.trim() === "" && name.trim() === "") {
         results = await getAllProducts();
       } else {
         results = await getProductByExample(searchProduct);
@@ -40,35 +57,36 @@ function ProductView({ products }) {
     }
   };
 
-  const selectHandler = (product) =>{
-
+  const selectHandler = (product) => {
     setSelectedProduct(product);
-
-  }
+  };
 
   const deleteHandler = async () => {
-
-    if(selectedProduct == null){
-      alert('There is no selected product!');
+    if (selectedProduct == null) {
+      alert("There is no selected product!");
       return;
     }
 
     const id = selectedProduct.productId;
     const message = await deleteProduct(id);
+    setTrigger((prev) => prev + 1);
+    setFilteredProduct(products);
     alert(message);
-  }
+  };
 
   const updateHandler = () => {
     if (selectedProduct == null) {
       alert("There is no selected product!");
       return;
     }
-
+    setTrigger((prev) => prev + 1);
     navigate("/UpdateProduct", { state: { product: selectedProduct } });
   };
 
   return (
     <div className="container mt-4">
+      <h2>Products</h2>
+
       <div className="form-inline mb-3">
         <input
           type="text"
@@ -109,17 +127,11 @@ function ProductView({ products }) {
           ))}
         </tbody>
       </table>
-      <div className="mt-3">
-        <button
-          className="btn btn-danger mr-2"
-          onClick={deleteHandler}
-        >
+      <div className="mt-3 button-container">
+        <button className="btn btn-danger mr-2" onClick={deleteHandler}>
           Delete Product
         </button>
-        <button
-          className="btn btn-info"
-          onClick={updateHandler}
-        >
+        <button className="btn btn-info" onClick={updateHandler}>
           Update Product
         </button>
       </div>

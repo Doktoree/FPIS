@@ -1,37 +1,70 @@
-import React, { useState } from 'react'
-import { getAllInventories, getInventoryById } from '../../services/inventoryService';
+import React, { useState, useEffect } from "react";
+import {
+  getAllInventories,
+  getInventoryById,
+} from "../../services/inventoryService";
+import { useNavigate } from "react-router-dom";
 
-function InventoryView({inventories}) {
+function InventoryView() {
+  const [id, setId] = useState("");
+  const [inventories, setInvetories] = useState([]);
+  const [filteredInventory, setFilteredInventory] = useState(inventories);
+  const [selectedInventory, setSelectedInventory] = useState(null);
+  const [trigger, setTrigger] = useState(0);
+  const navigate = useNavigate();
 
-   const[id, setId] = useState('');
-   const[filteredInventory, setFilteredInventory] = useState(inventories);
-   const [selectedInventory, setSelectedInventory] = useState(null);
-   const searchHandler = async () =>{
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const inventories = await getAllInventories();
+        setInvetories(inventories);
+        setFilteredInventory(inventories);
+      } catch (error) {
+        console.log("Greska!");
+      }
+    }
 
-        try {
+    fetchData();
+  }, [trigger]);
 
-            let result;
-            if(isNaN(id)){
-                alert('Id must be number!');
-                return;
-            }
-            if(id.trim() == ''){
-                result = await getAllInventories();
-            }
+  const searchHandler = async (event) => {
+    event.preventDefault();
+    try {
+      let result;
+      if (isNaN(id)) {
+        alert("Id must be number!");
+        return;
+      }
+      if (id.trim() === "") {
+        result = await getAllInventories();
+      } else {
+        result = await getInventoryById(id);
+        result = [result];
+      }
+      setFilteredInventory(result);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
-            else{
-                result = await getInventoryById(id);
-            }
-            
-            setFilteredInventory(result);
-            
-        } catch (error) {
-            alert(error.message);
-        }
+  const selectHandler = (inventory) => {
+    setSelectedInventory(inventory);
+  };
 
-        
+  const updateHandler = async (event) => {
+    event.preventDefault();
 
-   }
+    if (selectedInventory == null) {
+      alert("There is no selected inventory!");
+      return;
+    }
+
+    const response = await getInventoryById(selectedInventory.inventoryId);
+    setTrigger((prev) => prev + 1);
+    navigate("/InventoryDetails", {
+      state: { inventory: response },
+    });
+  };
 
   return (
     <div className="container mt-4">
@@ -58,7 +91,10 @@ function InventoryView({inventories}) {
         </thead>
         <tbody>
           {filteredInventory.map((inventory) => (
-            <tr key={inventory.inventoryId} onClick={() => selectHandler(inventory)}>
+            <tr
+              key={inventory.inventoryId}
+              onClick={() => selectHandler(inventory)}
+            >
               <td>{inventory.inventoryId}</td>
               <td>{inventory.name}</td>
               <td>{inventory.date}</td>
@@ -67,15 +103,12 @@ function InventoryView({inventories}) {
         </tbody>
       </table>
       <div className="mt-3">
-        <button
-          className="btn btn-info"
-          //onClick={updateHandler}
-        >
-          Change Inventory
+        <button className="btn btn-info" onClick={updateHandler}>
+          Details
         </button>
       </div>
     </div>
   );
 }
 
-export default InventoryView
+export default InventoryView;

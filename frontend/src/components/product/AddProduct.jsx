@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { createProduct } from "../../services/productService";
 import "./AddProduct.css";
 
-
-function AddProduct() {
+function AddProduct({ setTrigger }) {
   const [ime, setIme] = useState("");
   const [cena, setCena] = useState("");
   const [opis, setOpis] = useState("");
@@ -11,9 +10,9 @@ function AddProduct() {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    if(isNaN(cena)){
-        alert('Price must be number!');
-        return;
+    if (isNaN(cena)) {
+      alert("Price must be number!");
+      return;
     }
 
     const product = {
@@ -22,12 +21,12 @@ function AddProduct() {
       description: opis,
     };
 
-    console.log(product);
-
     await createProduct(product);
-    setIme('');
-    setCena('');
-    setOpis('');
+    setTrigger((prev) => prev + 1);
+    setIme("");
+    setCena("");
+    setOpis("");
+    alert("Product is succesfully created!");
   };
 
   return (

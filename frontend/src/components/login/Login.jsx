@@ -19,6 +19,7 @@ function Login({ setIsLoggedIn, setLoggedInUser }) {
       const response = await checkUser(user);
       setLoggedInUser(response);
       setIsLoggedIn(true);
+      localStorage.setItem("user", JSON.stringify(response));
       navigate("/NavBar");
     } catch (error) {
       alert(error.message);

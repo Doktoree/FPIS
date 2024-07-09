@@ -1,8 +1,6 @@
 const apiUrl = "http://localhost:8080/api/user";
 
 export async function checkUser(user) {
-  console.log(user + ' url: ' + apiUrl);
-
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
@@ -12,11 +10,10 @@ export async function checkUser(user) {
   });
 
   if (!response.ok) {
-    throw new Error("nIJE uSPELO");
+    throw new Error("There is no user with that username and password!");
   }
 
   const data = await response.json();
 
-  console.log("Uspelo");
   return data;
 }

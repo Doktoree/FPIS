@@ -3,12 +3,16 @@ import { createProduct, getProductById } from "../../services/productService";
 import {
   saveInventory,
   createInventory,
+  updateInventory,
 } from "../../services/inventoryService";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./AddInventory.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function AddInventory({ loggedInUser }) {
-  const [ime, setIme] = useState("");
+function AddInventoryItem({ loggedInUser }) {
+  const location = useLocation();
+  const { inventory } = location.state || {};
+  const [ime, setIme] = useState(inventory.name);
   const [stavkeInventara, setStavkeInventara] = useState([]);
   const [kolicina, setKolicina] = useState(1);
   const [jedinicaMere, setJedinicaMere] = useState("PCS");
@@ -18,15 +22,11 @@ function AddInventory({ loggedInUser }) {
   const units = ["PACK"];
   const states = ["USED", "DAMAGED", "RETURNED", "SOLD"];
   const user = loggedInUser;
+  const navigate = useNavigate();
 
   const handleAddItem = async (event) => {
     try {
       event.preventDefault();
-
-      if (ime === "") {
-        alert("Inventory name should not be empty!");
-        return;
-      }
 
       if (sifraProizvoda === "") {
         alert("Product ID should not be empty!");
@@ -34,6 +34,7 @@ function AddInventory({ loggedInUser }) {
       }
 
       let checkedProduct = await getProductById(sifraProizvoda);
+      console.log(checkedProduct);
 
       const productDto = checkedProduct;
 
@@ -66,13 +67,15 @@ function AddInventory({ loggedInUser }) {
       return;
     }
 
-    const inventory = {
+    const inventar = {
+      inventoryId: inventory.inventoryId,
       name: ime,
       employeeDtos: [{ employeeId: user.employee.employeeId }],
       inventoryItems: stavkeInventara,
     };
 
-    await createInventory(inventory);
+    await updateInventory(inventar);
+    alert("Inventory item is successfully added!");
     setIme("");
     setJedinicaMere("PCS");
     setKolicina(1);
@@ -80,6 +83,7 @@ function AddInventory({ loggedInUser }) {
     setSifraProizvoda("");
     setInputState(false);
     setStavkeInventara([]);
+    navigate("/InventoryView");
   };
 
   const handleDeleteItem = (index) => {
@@ -97,7 +101,7 @@ function AddInventory({ loggedInUser }) {
           value={ime}
           onChange={(e) => setIme(e.target.value)}
           disabled={inputState}
-          required
+          readOnly
         />
       </div>
       <hr />
@@ -215,4 +219,4 @@ function AddInventory({ loggedInUser }) {
   );
 }
 
-export default AddInventory;
+export default AddInventoryItem;
