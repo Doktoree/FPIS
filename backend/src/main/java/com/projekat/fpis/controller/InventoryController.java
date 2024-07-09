@@ -95,7 +95,6 @@ public class InventoryController {
     @PatchMapping()
     public ResponseEntity<?> updateInventory(@RequestBody InventoryDto inventoryDto){
         
-        System.out.println("Inventory dto: " + inventoryDto.toString());
         inventoryService.updateInventory(inventoryDto);
         
         return ResponseEntity.ok("Inventory is successfully updated!");

@@ -12,7 +12,6 @@ import com.projekat.fpis.domain.Product;
 import com.projekat.fpis.dto.EmployeeDto;
 import com.projekat.fpis.dto.InventoryDto;
 import com.projekat.fpis.dto.InventoryItemDto;
-import com.projekat.fpis.dto.ProductDto;
 import com.projekat.fpis.ids.InventoryEmployeeId;
 import com.projekat.fpis.ids.InventoryItemId;
 import com.projekat.fpis.mapper.EmployeeMapper;
@@ -227,15 +226,12 @@ public class InventoryService {
 
     public boolean deleteInventoryItem(Long invetoryId, Long inventoryItemId) {
 
-        System.out.println("Usao u metodu 1!");
         Inventory inventory = new Inventory();
         inventory.setInventoryId(invetoryId);
         InventoryItemId id = new InventoryItemId(inventoryItemId, inventory);
 
         Optional<InventoryItem> optionalInventoryItem = inventoryItemRepository.findById(id);
-        System.out.println("Usao u metodu 2!");
         if (!optionalInventoryItem.isPresent()) {
-            System.out.println("Vratio false 1!");
             return false;
 
         }
@@ -244,7 +240,6 @@ public class InventoryService {
             return false;
         }
         inventoryItemRepository.deleteById(id);
-        System.out.println("Ende metoda 1!");
         return true;
 
     }
@@ -259,7 +254,6 @@ public class InventoryService {
         List<InventoryItem> inventoryItems = inventoryDto.getInventoryItems().stream().map(InventoryItemMapper::mapToInventoryItem).collect(Collectors.toList());
         List<InventoryEmployee> inventoryEmployees = inventoryEmployeeRepository.findById_InventoryInventoryId(inventory.getInventoryId());
         boolean flag = false;
-        System.out.println("Prosao update 1");
         for(InventoryEmployee ie: inventoryEmployees){
             
             if(employee.getEmployeeId().compareTo(ie.getId().getEmployee().getEmployeeId()) == 0){
@@ -268,21 +262,17 @@ public class InventoryService {
             }
             
         }
-        System.out.println("Prosao update 2");
         if(!flag){
             
             InventoryEmployeeId id = new InventoryEmployeeId(inventory, employee);
             inventoryEmployeeRepository.save(new InventoryEmployee(id));
         }
-        System.out.println("Prosao update 3");
         inventoryItems.stream().forEach(it -> {
 
             it.setInventory(inventory);
-            System.out.println("Inventort item update: " + it.toString());
             inventoryItemRepository.save(it);
         
         });
-        System.out.println("Prosao update 4");
     }
 
 }

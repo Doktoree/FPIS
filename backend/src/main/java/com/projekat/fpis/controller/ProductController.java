@@ -61,7 +61,6 @@ public class ProductController {
     @PostMapping("/search")
     public ResponseEntity<?> getProductByName(@RequestBody ProductDto productDto) {
 
-        System.out.println("Product dto: " + productDto.getName());
         List<ProductDto> productDtos = productService.getProductByName(productDto);
 
         if (productDtos == null) {
