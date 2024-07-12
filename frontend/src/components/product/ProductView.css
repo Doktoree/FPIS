@@ -23,13 +23,13 @@
   color: white;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
+ .table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(0, 0, 0, 0.05);
-}
+} 
 
-.table-hover tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.075);
-}
+ .table-hover tbody tr:hover {
+  background-color: rgba(0, 212, 42, 0.075);
+} 
 
 .btn-danger {
   margin-right: 10px;

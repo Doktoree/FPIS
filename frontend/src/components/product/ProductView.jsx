@@ -22,7 +22,6 @@ function ProductView() {
     async function fetchData() {
       try {
         const products = await getAllProducts();
-        console.log(products);
         setProducts(products);
         setFilteredProduct(products);
       } catch (error) {
@@ -117,14 +116,29 @@ function ProductView() {
           </tr>
         </thead>
         <tbody>
-          {filteredProduct.map((product) => (
-            <tr key={product.productId} onClick={() => selectHandler(product)}>
-              <td>{product.productId}</td>
-              <td>{product.name}</td>
-              <td>{product.price}</td>
-              <td>{product.description}</td>
-            </tr>
-          ))}
+          {filteredProduct.map((product) =>
+            selectedProduct &&
+            product.productId === selectedProduct.productId ? (
+              <tr key={product.productId}>
+                <td style={{ backgroundColor: "aqua" }}>{product.productId}</td>
+                <td style={{ backgroundColor: "aqua" }}>{product.name}</td>
+                <td style={{ backgroundColor: "aqua" }}>{product.price}</td>
+                <td style={{ backgroundColor: "aqua" }}>
+                  {product.description}
+                </td>
+              </tr>
+            ) : (
+              <tr
+                key={product.productId}
+                onClick={() => selectHandler(product)}
+              >
+                <td>{product.productId}</td>
+                <td>{product.name}</td>
+                <td>{product.price}</td>
+                <td>{product.description}</td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
       <div className="mt-3 button-container">
